@@ -10,3 +10,13 @@
 !.gitignore
 *.out
 *.exe
+# Unix/Linux executables
+Introduction_problem/Increasing_Array
+Introduction_problem/Missing_Number
+Introduction_problem/Repetitions
+Introduction_problem/weird_algo
+# General executable patterns
+*
+!*.cpp
+!.gitignore
+!README.md
