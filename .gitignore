@@ -1,22 +1,28 @@
+# IDE and editor files
 .vscode/
 .history/
 .idea/
 *.sublime-workspace
 *.sublime-project
 *.code-workspace
+
+# Temporary and log files
 *.tmp
 *.logs
-!*.cpp
-!.gitignore
+
+# Executable files
 *.out
 *.exe
-# Unix/Linux executables
+
+# Specific executable files in Introduction_problem
 Introduction_problem/Increasing_Array
 Introduction_problem/Missing_Number
 Introduction_problem/Repetitions
 Introduction_problem/weird_algo
-# General executable patterns
-*
+Introduction_problem/Permutation
+Introduction_problem/permutaion
+
+# Include source files
 !*.cpp
 !.gitignore
 !README.md
