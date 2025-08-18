@@ -1,0 +1,34 @@
+name: Auto Rename Commit
+
+on:
+  push:
+    branches:
+      - main   # change if you use another branch
+
+jobs:
+  rename:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Get last commit message
+        id: last
+        run: echo "msg=$(git log -2 --pretty=%s | tail -n1)" >> $GITHUB_OUTPUT
+
+      - name: Amend commit message
+        run: |
+          prev="${{ steps.last.outputs.msg }}"
+          echo "Previous commit: $prev"
+          if [[ $prev =~ day_([0-9]+) ]]; then
+            num=${BASH_REMATCH[1]}
+            next=$((num + 1))
+            git config user.name github-actions
+            git config user.email github-actions@github.com
+            git commit --amend -m "day_$next"
+            git push --force
+          else
+            echo "Previous commit not in day_X format, skipping."
+          fi
