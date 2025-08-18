@@ -3,32 +3,35 @@ name: Auto Rename Commit
 on:
   push:
     branches:
-      - main   # change if you use another branch
+      - main
 
 jobs:
-  rename:
+  rename-commit:
     runs-on: ubuntu-latest
-
     steps:
-      - uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
+      - name: Checkout repository
+        uses: actions/checkout@v3
 
-      - name: Get last commit message
-        id: last
-        run: echo "msg=$(git log -2 --pretty=%s | tail -n1)" >> $GITHUB_OUTPUT
+      - name: Get latest commit message
+        id: get_message
+        run: |
+          echo "LAST_COMMIT=$(git log -1 --pretty=%B)" >> $GITHUB_ENV
+
+      - name: Generate next day message
+        id: next_message
+        run: |
+          LAST="${LAST_COMMIT}"
+          if [[ $LAST =~ day_([0-9]+) ]]; then
+            NUM=${BASH_REMATCH[1]}
+            NEXT=$((NUM + 1))
+            echo "NEW_MESSAGE=day_${NEXT}" >> $GITHUB_ENV
+          else
+            echo "NEW_MESSAGE=day_1" >> $GITHUB_ENV
+          fi
 
       - name: Amend commit message
         run: |
-          prev="${{ steps.last.outputs.msg }}"
-          echo "Previous commit: $prev"
-          if [[ $prev =~ day_([0-9]+) ]]; then
-            num=${BASH_REMATCH[1]}
-            next=$((num + 1))
-            git config user.name github-actions
-            git config user.email github-actions@github.com
-            git commit --amend -m "day_$next"
-            git push --force
-          else
-            echo "Previous commit not in day_X format, skipping."
-          fi
+          git config user.name "github-actions"
+          git config user.email "github-actions@github.com"
+          git commit --amend -m "${NEW_MESSAGE}" || echo "No commit to amend"
+          git push --force
