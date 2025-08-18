@@ -8,9 +8,12 @@ on:
 jobs:
   rename-commit:
     runs-on: ubuntu-latest
+    if: github.actor != 'github-actions'   # Prevent infinite loop
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
+        with:
+          fetch-depth: 0   # full history so git log works
 
       - name: Get latest commit message
         id: get_message
