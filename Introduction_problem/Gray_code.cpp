@@ -1,4 +1,3 @@
-// day_12
 #include<iostream>
 using namespace std;
 int main()
