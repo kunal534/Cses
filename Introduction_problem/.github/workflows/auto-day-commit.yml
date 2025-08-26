@@ -1,38 +1,47 @@
-name: Auto Day Commit
+name: Auto Increment Commit Message
 
 on:
   push:
     branches:
-      - main
+      - main 
 
 jobs:
-  auto-day-commit:
+  increment-commit:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
+    - name: Checkout repo
+      uses: actions/checkout@v3
+      with:
+        persist-credentials: false  
 
-      - name: Get latest day_N commit number
-        id: get_day
-        run: |
-          last_day=$(git log --grep='^day_[0-9]\+' --pretty=format:'%s' | grep -Eo 'day_[0-9]+' | sed 's/day_//' | sort -n | tail -1)
-          if [ -z "$last_day" ]; then
-            next_day=1
-          else
-            next_day=$((last_day + 1))
-          fi
-          echo "next_day=$next_day" >> $GITHUB_OUTPUT
+    - name: Get latest commit message
+      id: get_commit
+      run: |
+        latest_commit_msg=$(git log -1 --pretty=%B)
+        echo "Latest commit message: $latest_commit_msg"
+        echo "::set-output name=msg::$latest_commit_msg"
 
-      - name: Make new day_N commit if there are changes
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add .
-          if ! git diff --cached --quiet; then
-            git commit -m "day_${{ steps.get_day.outputs.next_day }}"
-            git push origin HEAD:main
-          else
-            echo "No changes to commit."
-          fi
+    - name: Increment day number and commit changes
+      env:
+        LAST_MSG: ${{ steps.get_commit.outputs.msg }}
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: |
+        # Extract number from commit msg like day_14
+        if [[ "$LAST_MSG" =~ day_([0-9]+) ]]; then
+          num=${BASH_REMATCH[1]}
+          next_num=$((num + 1))
+        else
+          # Default start if no match found
+          next_num=1
+        fi
+        new_msg="day_${next_num}"
+        echo "New commit message: $new_msg"
+
+        # Make sure you have changes to commit, for demo create a dummy file with timestamp
+        echo "Automated commit for $new_msg" > day.txt
+        git config user.name "github-actions[bot]"
+        git config user.email "github-actions[bot]@users.noreply.github.com"
+        git add day.txt
+        git commit -m "$new_msg"
+        git push origin HEAD:main
