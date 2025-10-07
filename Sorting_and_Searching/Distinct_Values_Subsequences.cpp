@@ -28,7 +28,7 @@ int main()
         now for the rest of independent elements : submisson(f+1)
         The choices for each value are independent. By the product rule in combinatorics:
         we would be multiplying it 
-        hence 
+        hence ---->
     */
 
    long long result = 1;
