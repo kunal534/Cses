@@ -1,41 +1,26 @@
-#include <iostream>
-#include <vector>
+#include<iostream>
+#include<vector>
 using namespace std;
-
-int main() {
-    int n;
-    cin >> n;
-
-    vector<int> children(n);
-    for (int i = 0; i < n; i++) children[i] = i + 1;
-
-    vector<int> removal_order;
-    int current = -1;  
-    int alive = n;
-    int diff = 2;      
-
-    while (alive > 0) {
-        int count = 0;
-        while (count < diff / 2 && alive > 0) {
-            int skips = 0;
-            while (true) {
-                current = (current + 1) % n;
-                if (children[current] != -1) {
-                    skips++;
-                    if (skips == 2) break;
-                }
-            }
-            removal_order.push_back(children[current]);
-            children[current] = -1;
-            alive--;
-            count++;
-        }
-        diff *= 2;
+struct Node{
+    int val;
+    Node* next;
+    Node(int x):val(x),next(nullptr){}
+};
+int main(){
+    int n;cin>>n;
+    vector<int>ans;
+    Node *srt=new Node(0);
+    Node *tmp=srt;
+    for(int i=1;i<n;i++){
+        Node *cur=new Node(i);
+        srt->next=cur;
+        srt=cur;
     }
-    for (int i = 0; i < n; i++) {
-        cout << removal_order[i];
-        if (i < n - 1) cout << " ";
+    srt->next=tmp;
+    while(ans.size()!=n){
+        ans.push_back(tmp->next->val);
+        tmp->next=tmp->next->next;
+        tmp=tmp->next;
     }
-    cout << "\n";
-    return 0;
+    for(int i:ans)cout<<i+1<<" ";
 }
