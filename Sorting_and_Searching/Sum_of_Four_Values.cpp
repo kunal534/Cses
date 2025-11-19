@@ -53,7 +53,7 @@ int main() {
             }
         }
     }
-
+    
     cout << "IMPOSSIBLE";
     return 0;
 }
