@@ -1,30 +1,34 @@
 #include<iostream>
 #include<vector>
-#include<map>
-#define ll long long
+#include<unordered_map>
+using namespace std;
 int main()
 {
-    int a,b;
-    std::cin>>a>>b;
-    std::vector<ll>arr(a);
-    for(ll i=0;i<a;i++)
-    {
-        std::cin>>arr[i];
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+
+    int n;
+    cin >> n;
+
+    vector<int> arr(n);
+    for (int i = 0; i < n; i++) {
+        cin >> arr[i];
     }
-    std::map<ll,ll>mp;
-    ll ans=0;
-    ll left=0;
-    for(ll right=0;right<a;right++)
-    {
-        mp[arr[right]]++;
-        while(mp.size()>b)
-        {
-            mp[arr[left]]--;
-            if(mp[arr[left]]==0)mp.erase(arr[left]);
-            left++;
+
+    unordered_map<int, int> mp; 
+    long long ans = 0;
+    int right = n - 1;
+
+    for (int i = n - 1; i >= 0; i--) {
+        if (mp.count(arr[i])) {
+            right = min(right, mp[arr[i]] - 1);
         }
-        ans+=(right-left+1);
+
+        ans += (right - i + 1);
+        mp[arr[i]] = i;
     }
-    std::cout<<ans<<"\n";
+
+    cout << ans << "\n";
     return 0;
+
 }
